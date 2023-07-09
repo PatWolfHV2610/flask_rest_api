@@ -5,6 +5,7 @@ Cython==0.29.36
 dl==0.1.0
 docutils==0.20.1
 Flask==2.3.2
+flask_smorest==0.42.0
 HTMLParser==0.0.2
 importlib_metadata==6.7.0
 jnius==1.1.0
