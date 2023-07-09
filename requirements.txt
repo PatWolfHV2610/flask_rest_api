@@ -1,5 +1,5 @@
 brotli==1.0.9
-ConfigParser==5.3.0
+ConfigParser==6.0.0
 cryptography==41.0.1
 Cython==0.29.36
 dl==0.1.0
@@ -11,9 +11,9 @@ jnius==1.1.0
 keyring==24.2.0
 lockfile==0.12.2
 lxml==4.9.3
-numpy==1.25.0
+numpy==1.25.1
 ordereddict==1.1
-protobuf==4.23.3
+protobuf==4.23.4
 pyOpenSSL==23.2.0
 toml==0.10.2
 tornado==6.3.2
