@@ -8,16 +8,14 @@ Flask==2.3.2
 flask_smorest==0.42.0
 HTMLParser==0.0.2
 importlib_metadata==6.7.0
-jnius==1.1.0
 keyring==24.2.0
 lockfile==0.12.2
 lxml==4.9.3
-numpy==1.25.1
 ordereddict==1.1
 protobuf==4.23.4
 pyOpenSSL==23.2.0
+python-dotenv
 toml==0.10.2
 tornado==6.3.2
 typing_extensions==4.7.1
-xmlrpclib==1.0.1
 zipp==3.15.0
