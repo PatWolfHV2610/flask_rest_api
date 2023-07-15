@@ -8,4 +8,4 @@ class StoreModel(db.Model):
     name = db.Column(db.String(30), unique=True, nullable=False)
     items = db.relationship("ItemModel", back_populates="store",
                             lazy="dynamic", cascade="all, delete")
-
+    tags = db.relationship("TagModel", back_populates="store", lazy="dynamic")
