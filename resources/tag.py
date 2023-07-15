@@ -1,10 +1,9 @@
 from db import db
-from flask import request
 from flask.views import MethodView
 from flask_smorest import Blueprint, abort
 from models import StoreModel, ItemModel
 from models.tag import TagModel
-from schemas import StoreSchema, StoreUpdateSchema, TagSchema, TagAndItemSchema
+from schemas import TagSchema, TagAndItemSchema
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 blp = Blueprint("Tag", __name__, description="Operation on tags")
