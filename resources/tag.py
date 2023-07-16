@@ -1,5 +1,6 @@
 from db import db
 from flask.views import MethodView
+from flask_jwt_extended import jwt_required
 from flask_smorest import Blueprint, abort
 from models import StoreModel, ItemModel
 from models.tag import TagModel
@@ -9,7 +10,7 @@ from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 blp = Blueprint("Tag", __name__, description="Operation on tags")
 
 
-@blp.route("/store/<string:store_id>/tag")
+@blp.route("/store/<int:store_id>/tag")
 class TagInStore(MethodView):
 
     @blp.response(200, TagSchema(many=True))
@@ -34,8 +35,10 @@ class TagInStore(MethodView):
         return tag
 
 
-@blp.route("/item/<string:item_id>/tag/<string:tag_id>")
+@blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagToItem(MethodView):
+
+    @jwt_required()
     @blp.response(201, TagSchema)
     def post(self, item_id, tag_id):
         item = ItemModel.query.get_or_404(item_id)
@@ -50,6 +53,7 @@ class LinkTagToItem(MethodView):
             abort(500)
         return tag
 
+    @jwt_required()
     @blp.response(201, TagAndItemSchema)
     def delete(self, item_id, tag_id):
         item = ItemModel.query.get_or_404(item_id)
@@ -65,13 +69,16 @@ class LinkTagToItem(MethodView):
         return {"message": "Item remove from tag" , "item": item, "tag": tag}
 
 
-@blp.route("/tag/<string:tag_id>")
+@blp.route("/tag/<int:tag_id>")
 class Tag(MethodView):
+
+    @jwt_required()
     @blp.response(200, TagSchema)
     def get(self, tag_id):
         tag = TagModel.query.get_or_404(tag_id)
         return tag
 
+    @jwt_required()
     @blp.response(202, description="Delete a tags id no item is tagged with it")
     @blp.alt_response(404, description="Tag not found")
     @blp.alt_response(400, description="Retrun if tag is assign to at least one item")

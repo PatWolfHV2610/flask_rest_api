@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 
-from flask import Flask
+from flask import Flask, jsonify
 from flask_smorest import Api
 from flask_jwt_extended import JWTManager
 
@@ -10,7 +10,11 @@ import models
 from resources.store import blp as StoreBlueprint
 from resources.item import blp as ItemBlueprint
 from resources.tag import blp as TagBlueprint
+from resources.user import blp as UserBlueprint
+from blocklist import BLOCKLIST
+
 load_dotenv()
+
 
 def create_app(db_url=None):
 
@@ -30,6 +34,42 @@ def create_app(db_url=None):
     app.config["JWT_SECRET_KEY"] = os.getenv("JWT_SECRET_KEY")
     jwt = JWTManager(app)
 
+    @jwt.token_in_blocklist_loader
+    def check_if_token_in_blocklist(jwt_header, jwt_payload):
+        return jwt_payload["jti"] in BLOCKLIST
+
+    @jwt.revoked_token_loader
+    def revoked_token_callback(jwt_header, jwt_payload):
+        return jsonify(
+            {"message": "The token has been revoked",
+             "error": "token_revoked"},
+            401
+        )
+
+    @jwt.additional_claims_loader
+    def add_claims_to_jwt(identity):
+        # This is not the good practice
+        # Please look into database to check whether user is an admin
+        if identity == 1:
+            return {"is_admin": True}
+        return {"is_admin": False}
+
+    @jwt.expired_token_loader
+    def expired_token_callback(jwt_header, jwt_payload):
+        return jsonify({"message":"The token has expired", "error": "Token expired"}, 401)
+
+    @jwt.invalid_token_loader
+    def invalid_token_callback(error):
+        return jsonify({"message": "Signature token fail", "error": "invalid_token"}, 401)
+
+    @jwt.unauthorized_loader
+    def missing_token_callback(error):
+        return jsonify(
+                {"message": "Request dose not contain token",
+                 "error": "authorization_required"},
+                401
+            )
+
     with app.app_context():
         db.create_all()
 
@@ -37,6 +77,7 @@ def create_app(db_url=None):
     api.register_blueprint(ItemBlueprint)
     api.register_blueprint(StoreBlueprint)
     api.register_blueprint(TagBlueprint)
+    app.register_blueprint(UserBlueprint)
 
     return app
 
