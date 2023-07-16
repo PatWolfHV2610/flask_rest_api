@@ -13,11 +13,13 @@ blp = Blueprint("Tag", __name__, description="Operation on tags")
 @blp.route("/store/<int:store_id>/tag")
 class TagInStore(MethodView):
 
+    @jwt_required()
     @blp.response(200, TagSchema(many=True))
     def get(self, store_id):
         store = StoreModel.query.get_or_404(store_id)
         return store.tags.all()
 
+    @jwt_required(fresh=True)
     @blp.arguments(TagSchema)
     @blp.response(201, TagSchema)
     def post(self, tag_data, store_id):
@@ -38,7 +40,7 @@ class TagInStore(MethodView):
 @blp.route("/item/<int:item_id>/tag/<int:tag_id>")
 class LinkTagToItem(MethodView):
 
-    @jwt_required()
+    @jwt_required(fresh=True)
     @blp.response(201, TagSchema)
     def post(self, item_id, tag_id):
         item = ItemModel.query.get_or_404(item_id)
@@ -53,7 +55,7 @@ class LinkTagToItem(MethodView):
             abort(500)
         return tag
 
-    @jwt_required()
+    @jwt_required(fresh=True)
     @blp.response(201, TagAndItemSchema)
     def delete(self, item_id, tag_id):
         item = ItemModel.query.get_or_404(item_id)
