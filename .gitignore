@@ -3,6 +3,4 @@ Scripts
 pyvenv.cfg
 .idea/
 __pycache__/
-instance/*
 .env
-migrations/*
